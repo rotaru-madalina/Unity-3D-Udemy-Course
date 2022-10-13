@@ -24,6 +24,12 @@ public class Movement : MonoBehaviour
         ProcessRotation();
     }
 
+    private void OnDisable()
+    {
+        if(audioSource != null)
+        audioSource.Stop();
+    }
+
     void ProcessThrust()
     {
         if (Input.GetKey(KeyCode.Space))
