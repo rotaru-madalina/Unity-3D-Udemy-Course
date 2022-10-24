@@ -10,6 +10,7 @@ public class ColissionHandler : MonoBehaviour
 
     [SerializeField] ParticleSystem explosionParticles;
     [SerializeField] ParticleSystem successParticles;
+
     AudioSource audioSource;
     bool playerdiedorsucceeded = false;
 

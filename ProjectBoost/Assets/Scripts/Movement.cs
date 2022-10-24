@@ -16,6 +16,10 @@ public class Movement : MonoBehaviour
     [SerializeField] float rotationThrust = 100f;
     [SerializeField] AudioClip mainEngine;
 
+    [SerializeField] ParticleSystem mainBoosterParticles;
+    [SerializeField] ParticleSystem leftBoosterParticles;
+    [SerializeField] ParticleSystem rightBoosterParticles;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,30 +44,77 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
-            
-            if(!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(mainEngine);
-            }
-        }   
+            StartThrusting();
+        }
         else
         {
-            audioSource.Stop();
+            StopThrusting();
         }
     }
-    private void ProcessRotation()
+
+    void StopThrusting()
     {
-        if (Input.GetKey(KeyCode.A))
+        audioSource.Stop();
+        mainBoosterParticles.Stop();
+    }
+
+    void StartThrusting()
+    {
+        rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(mainEngine);
+        }
+        if (!mainBoosterParticles.isPlaying)
+        {
+            mainBoosterParticles.Play();
+        }
+    }
+
+     void ProcessRotation()
+    {
+        bool isPressingA = Input.GetKey(KeyCode.A);
+        bool isPressingD = Input.GetKey(KeyCode.D);
+        bool startedPressingA = Input.GetKeyDown(KeyCode.A);
+        bool startedPressingD = Input.GetKeyDown(KeyCode.D);
+        bool stoppedPressingA = Input.GetKeyUp(KeyCode.A);
+        bool stoppedPressingD = Input.GetKeyUp(KeyCode.D);
+
+        if (isPressingA)
         {
             ApplyRotation(rotationThrust);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else
         {
-            // sau:
-            //transform.Rotate(-Vector3.forward);
-            //transform.Rotate(Vector3.back * rotationThrust * Time.deltaTime);
-            ApplyRotation(-rotationThrust);
+            if (isPressingD)
+            {
+                // sau:
+                //transform.Rotate(-Vector3.forward);
+                //transform.Rotate(Vector3.back * rotationThrust * Time.deltaTime);
+                ApplyRotation(-rotationThrust);
+            }
+        }
+
+        processingParticles(startedPressingA, startedPressingD, stoppedPressingA, stoppedPressingD);
+    }
+
+     void processingParticles(bool startedPressingA, bool startedPressingD, bool stoppedPressingA, bool stoppedPressingD)
+    {
+        if (startedPressingA)
+        {
+            rightBoosterParticles.Play();
+        }
+        if (stoppedPressingA)
+        {
+            rightBoosterParticles.Stop();
+        }
+        if (startedPressingD)
+        {
+            leftBoosterParticles.Play();
+        }
+        if (stoppedPressingD)
+        {
+            leftBoosterParticles.Stop();
         }
     }
 
