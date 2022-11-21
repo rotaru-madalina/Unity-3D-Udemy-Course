@@ -10,16 +10,38 @@ public class ColissionHandler : MonoBehaviour
 
     [SerializeField] ParticleSystem explosionParticles;
     [SerializeField] ParticleSystem successParticles;
-
+        
     AudioSource audioSource;
     bool playerdiedorsucceeded = false;
+    bool collisionDisabled = false;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
     }
+    void Update()
+    {
+        CheatLoadNextLevel();
+        CheatDisableCollisions();
+    }
+    void CheatLoadNextLevel()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+    }
+    void CheatDisableCollisions()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionDisabled = !collisionDisabled; // toggle collision
+        }
+    }
     void OnCollisionEnter(Collision collision)
     {
+        if (collisionDisabled) { return; }
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
